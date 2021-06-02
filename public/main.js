@@ -1,66 +1,50 @@
-
-// AJAX 加载 CSS 生效
-getCSS.onclick = () =>{
+function accessAJAX(filename,func){
     const request = new XMLHttpRequest();
-    request.open('GET','/style.css');
+    request.open('GET',filename);
+    // 下载成功，status不明
     request.onreadystatechange = () =>{
-        // 下载成功，status不明
-        if(request.readyState === 4 && (request.status >=200 && request.status <300)){
+        if(request.readyState === 4 && (request.status >=200 && request.status <300)) {
             console.log('Request Succeed: ');
             console.log(request.response);
-
-            const style = document.createElement('style');
-            style.innerHTML = request.response;
-            document.head.appendChild(style);
-        };
-        request.onerror = () =>{
-            console.log('Request Error: ');
-            console.log(request.response);
+            func(request.response);
         }
     };
+    request.onerror = () =>{
+        console.log('Request Error: ');
+        console.log(request.response);
+    };
     request.send();
+}
+// AJAX 加载 CSS 生效
+getCSS.onclick = () =>{
+    // filename: '/style.css'
+    accessAJAX('/style.css',(response)=>{
+        const style = document.createElement('style');
+        style.innerHTML = response;
+        document.head.appendChild(style);
+    });
+
 }
 
 // AJAX 加载 JS 执行
 getJS.onclick = () =>{
-    const request = new XMLHttpRequest();
-    request.open('GET','/2.js');
-    request.onreadystatechange = () =>{
-        if(request.readyState === 4 && (request.status >=200 && request.status <300)) {
-            console.log('Request Succeed: ');
-            console.log(request.response);
-
+    // filename: /2.js
+    accessAJAX('/2.js',(response)=>{
             const script = document.createElement('script');
-            script.innerHTML = request.response;
+            script.innerHTML = response;
             document.body.appendChild(script);
-        }
-    }
-    request.onerror = () =>{
-        console.log('Request Error: ');
-        console.log(request.response);
-    };
-    request.send();
+
+    });
 }
 
 // AJAX 加载 HTML 显示
 getHTML.onclick = () =>{
-    const request = new XMLHttpRequest();
-    request.open('GET','/3.html');
-    request.onreadystatechange = () =>{
-        if(request.readyState === 4 && (request.status >=200 && request.status <300)) {
-            console.log('Request Succeed: ');
-            console.log(request.response);
-
-            const div = document.createElement('div');
-            div.innerHTML = request.response;
-            document.body.appendChild(div);
-        }
-    }
-    request.onerror = () =>{
-        console.log('Request Error: ');
-        console.log(request.response);
-    };
-    request.send();
+    // filename: /3.html
+    accessAJAX('/3.html',(response)=>{
+        const div = document.createElement('div');
+        div.innerHTML = response;
+        document.body.appendChild(div);
+    });
 }
 
 // AJAX 加载 XML 获取节点内容
@@ -92,22 +76,11 @@ getXML.onclick = () =>{
 
 // AJAX 加载 JSON 转化为对象
 getJSON.onclick = () =>{
-    const request = new XMLHttpRequest();
-    request.open('GET','/5.json');
-    request.onreadystatechange = () => {
-        if (request.readyState === 4 && (request.status >= 200 && request.status < 300)) {
-            console.log('Request Succeed: ');
-            const JSONobject = JSON.parse(request.response);
-            myName.textContent = " - " + JSONobject.name;
-        }
-    }
-    request.onerror = () =>{
-        console.log('Request Error: ');
-        console.log(request.response);
-    };
-    request.send();
+    accessAJAX('/5.json',(response)=>{
+        const JSONobject = JSON.parse(response);
+        myName.textContent = " - " + JSONobject.name;
+    });
 }
-
 
 // 模拟分页操作
 let n = 1;
